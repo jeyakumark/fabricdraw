@@ -2,6 +2,7 @@
 <head>
     <meta charset="utf-8">
     <title>fabric.js-simple text display</title>
+	 <meta name="viewport" content="width=device-width" />
 	
 	<!-- Get version 1.1.0 of Fabric.js from CDN -->
 	<!--
@@ -15,20 +16,31 @@
 <body>
 		<!-- A canvas tag is required or 
 			 Fabric.js doesn't know where to draw. -->
-		<canvas id="c" style="border:1px solid black;" width="800" height="600"></canvas>
+		<canvas id="c" style="border:1px solid black;" width="1048" height="768"></canvas>
 		<!--  <div style="display: inline-block; margin-left: 10px">  -->
-              <button id="loadImage" class="btn btn-info">Load</button>
-              <button id="addImage" class="btn btn-info">Image</button>
-			  <input type="image" src="shape.png"  id ="addShape" name="addShape" width="40" height="40">
+              <button id="loadImage" class="btn btn-info" width="60" height="60">Load</button>
+			  
+			    <button id="zoomIn" class="btn btn-info" width="60" height="60">Zoom In</button>
+				<button id="zoomOut" class="btn btn-info" width="60" height="60">Zoom Out</button>
+				
+				
+           <!--    <button id="addImage" class="btn btn-info">Image</button>  -->
+			 <!--  <button id="rotateImage" class="btn btn-info">Rotate</button> -->
+			<!--  <input type="image" src="shape.png"  id ="addShape" name="addShape" width="60" height="60"> -->
+			   <input type="image" src="rotate.png"  id ="rotateImage" name="rotateImage" width="60" height="60">
+			  <input type="image" src="rectangle.png"  id ="addRect" name="addRect" width="60" height="60">
+			  <input type="image" src="triangle.png"  id ="addTri" name="addTri" width="60" height="60">
+			  <input type="image" src="circle.png"  id ="addCircle" name="addCircle" width="60" height="60">
+			  
 			 <!--  <button id="addShape" class="btn btn-info">Shape</button>  -->
 			 <!-- <button id="addText" class="btn btn-info">Text</button>  -->
-			    <input type="image" src="text.png"  id ="addText" name="addText" width="40" height="40">
+			    <input type="image" src="text.png"  id ="addText" name="addText" width="60" height="60">
 			  <button id="addCropMode" class="btn btn-info">Crop Mode</button>
 			  <button id="addCrop" class="btn btn-info">Crop</button>
 			 <!--  <button id="clear" class="btn btn-info">Clear</button> -->
-			  <input type="image" src="clear.png"  id ="clear" name="clear" width="40" height="40">
+			  <input type="image" src="clear.png"  id ="clear" name="clear" width="60" height="60">
 			  
-			  <input type="image" src="line.png"  id ="drawMode" name="clear" width="40" height="40">
+			  <input type="image" src="line.png"  id ="drawMode" name="clear" width="60" height="60">
 			    <button id="save" class="btn btn-info">Save</button>
 			 
 	    <!-- </div>  -->
@@ -80,6 +92,10 @@
 	// Run only when HTML is loaded and 
 	// DOM properly initialized (courtesy jquery)
 	$(function () {
+	
+	    var canvasScale = 1;
+        var SCALE_FACTOR = 1.2;
+
 		var canvas = new fabric.Canvas('c');
 		
 		 document.getElementById('drawing-mode-options').style.visibility = 'hidden';
@@ -104,12 +120,14 @@
          // alert ('load image');
 		 
 		  
-          fabric.Image.fromURL('bg.png', function(oImg) {
-		  oImg.width = 600;
-		  oImg.height = 400;
+          fabric.Image.fromURL('after.png', function(oImg) {
+		  oImg.hasRotatingPoint =true;
+		  //oImg.width = 600;
+		  //oImg.height = 400;
           canvas.add(oImg);
+		  oImg.center();
 		  canvas.sendToBack(oImg);
-		  group.addWithUpdate(oImg);
+		 // group.addWithUpdate(oImg);
 		  
              }); 
         });
@@ -117,49 +135,170 @@
 		 document.getElementById('addText').addEventListener('click', function(e) {
 		// alert('text');
          var txt = new fabric.IText('hello world', {left: 600,top: 400	});
+		 txt.hasRotatingPoint=true;
 		   canvas.add(txt);
-		   group.addWithUpdate(txt);
+		   //group.addWithUpdate(txt);
 		 });
 		
+		/*
 		 document.getElementById('addShape').addEventListener('click', function(e) {
 		// alert('shape');
          var shp = new fabric.Rect({ width: 50, height: 50, left: 50, top: 50, fill: 'rgb(255,0,0)'});
 		 canvas.add(shp);
 		 group.addWithUpdate(shp);
 		 });
+		 */
 		 
+		 
+		  document.getElementById('addRect').addEventListener('click', function(e) {
+		 //alert('shape');
+         var rect = new fabric.Rect({ width: 50, height: 50, left: 50, top: 50, fill: 'transparent'});
+		 rect.set({ strokeWidth: 2, stroke: 'rgba(100,200,200,0.5)' });
+		 rect.hasRotatingPoint=true;
+
+		 canvas.add(rect);
+		 //group.addWithUpdate(rect);
+		 });
+		 
+		 
+		  document.getElementById('addTri').addEventListener('click', function(e) {
+		//alert('shape');
+         var tri = new fabric.Triangle({ width: 50, height: 50, left: 50, top: 50, fill: 'transparent'});
+		  tri.set({ strokeWidth: 2, stroke: 'rgba(100,200,200,0.5)' });
+		  tri.hasRotatingPoint = true;
+		 canvas.add(tri);
+		// group.addWithUpdate(tri);
+		 });
+		 
+		 
+		  document.getElementById('addCircle').addEventListener('click', function(e) {
+		 //alert('shape');
+         var cir = new fabric.Circle({ radius:25, left: 50, top: 50, fill: 'transparent'});
+		 cir.set({ strokeWidth: 2, stroke: 'rgba(100,200,200,0.5)' });
+		 cir.hasRotatingPoint= true;
+		 canvas.add(cir);
+		 //group.addWithUpdate(cir);
+		 });
+		 
+		 
+		 /*
 		 document.getElementById('addImage').addEventListener('click', function(e) {
 		 var img = fabric.Image.fromURL('bird.png', function(osmall) {
 		  canvas.add(osmall);
 		 });
-		  // oImg.width = 600;
-		 //oImg.height = 400;
-          //canvas.add(osmall);
-		
+		 
 		 group.addWithUpdate(img);
 		 });
+		 */
+		 
+		 document.getElementById('rotateImage').addEventListener('click', function(e) {
+		  //alert('rotate');
+		  
+           //canvas.remove(group).renderAll();
+
+		   var rotgroup = new fabric.Group();
+		   
+		 
+		   //canvas.clear().renderAll();
+		   //canvas.add(rotgroup);
+		   
+		   canvas.forEachObject(function(obj){
+		    alert (obj.get('type'));
+		    if (obj.get('type') != "group")
+			{
+		     rotgroup.add(obj);
+			  //alert("added");
+			 obj.set('active',true);
+			 }
+		   }
+		   );
+		   
+		  canvas.add(rotgroup);
+		  rotgroup.centerH();
+           rotgroup.centerV();
+		   rotgroup.rotate(90);
+		   rotgroup.center();
+		   rotgroup.setAngle(90).setCoords();
+		   
+		   /*
+		   canvas.forEachObject(function(obj){
+         
+		    obj.set('active',true);
+			obj.setAngle(obj.getAngle() + 90).setCoords();
+			if (obj.get('type') == "image")
+			{
+			   obj.center();
+			}
+              });
+		   */
+		   
+		   
+		  canvas.renderAll();
+		 });
+		  /*
+		    var group = new fabric.Group([
+
+  canvas.item(0).clone(),
+
+  canvas.item(1).clone(),
+  
+  canvas.item(2).clone(),
+ // canvas.item(3).clone(),
+  //canvas.item(4).clone()
+
+]);
+
+ 
+
+canvas.clear().renderAll();
+
+canvas.add(group);
+
+ 
+
+
+
+group.centerH();
+
+group.centerV();
+
+group.rotate(70);
+
+ 
+var items = group._objects;
+group._restoreObjectsState();
+canvas.remove(group);
+*/
+
+		  
 		 
 		 document.getElementById('addCropMode').addEventListener('click', function(e) {
 		 //alert('Crop');
-         var shp = new fabric.Rect({ width: 100, height: 100, left: 50, top: 50, fill: 'transparent' , stroke :'black', strokeWidth: 1});
+         var shp = new fabric.Rect({ width: 1048, height: 768, left: 0, top: 0, fill: 'transparent' , stroke :'white', strokeWidth: 1});
 		 canvas.add(shp);
-		 group.addWithUpdate(shp);
+		 //shp.center();
+		// group.addWithUpdate(shp);
 		 });
 		 
 		  document.getElementById('addCrop').addEventListener('click', function(e) {
-		  
+		   canvas.on("after:render", function(){ canvas.calcOffset() });
+		   
 		   var cobj= canvas.getActiveObject();
-		  
+		   //canvas.setCoords();
+		    //alert (cobj.left);
+			//alert (cobj.get('left'));
 		   
 		   
-               object.clipTo = function (ctx) {
-               ctx.rect(cobj.left, cobj.top, cobj.width, cobj.height);
-			   };
-               object.selectable = true;
-               disabled = true;
-               //el.visible = false;
+              canvas.clipTo = function (ctx) {
+                 ctx.rect(cobj.left, cobj.top, cobj.width, cobj.height);
+			  };
+               //object.selectable = true;
+               //disabled = true;
+               //cobj.visible = false;
+			    
                canvas.renderAll();
-			   alert('image croped');
+			   canvas.calcOffset() ;
+			   //alert('image croped');
 		 });
 		 
 		 
@@ -252,7 +391,100 @@
 
 		 });
 		 
+		 document.getElementById('zoomIn').addEventListener('click', function(e) {
+		     //alert ("Zoom in");
+               zoomIn();
+          });
+		  
+		   document.getElementById('zoomOut').addEventListener('click', function(e) {
+		     //alert ("Zoom Out");
+               zoomOut();
+          });
 		 
+		 function zoomIn() {
+    // TODO limit the max canvas zoom in
+    
+    canvasScale = canvasScale * SCALE_FACTOR;
+    
+    var objects = canvas.getObjects();
+    for (var i in objects) {
+        var scaleX = objects[i].scaleX;
+        var scaleY = objects[i].scaleY;
+        var left = objects[i].left;
+        var top = objects[i].top;
+        
+        var tempScaleX = scaleX * SCALE_FACTOR;
+        var tempScaleY = scaleY * SCALE_FACTOR;
+        var tempLeft = left * SCALE_FACTOR;
+        var tempTop = top * SCALE_FACTOR;
+        
+        objects[i].scaleX = tempScaleX;
+        objects[i].scaleY = tempScaleY;
+        objects[i].left = tempLeft;
+        objects[i].top = tempTop;
+        
+        objects[i].setCoords();
+    }
+        
+    canvas.renderAll();
+}
+
+// Zoom Out
+function zoomOut() {
+    // TODO limit max cavas zoom out
+    
+    canvasScale = canvasScale / SCALE_FACTOR;
+    
+    var objects = canvas.getObjects();
+    for (var i in objects) {
+        var scaleX = objects[i].scaleX;
+        var scaleY = objects[i].scaleY;
+        var left = objects[i].left;
+        var top = objects[i].top;
+    
+        var tempScaleX = scaleX * (1 / SCALE_FACTOR);
+        var tempScaleY = scaleY * (1 / SCALE_FACTOR);
+        var tempLeft = left * (1 / SCALE_FACTOR);
+        var tempTop = top * (1 / SCALE_FACTOR);
+
+        objects[i].scaleX = tempScaleX;
+        objects[i].scaleY = tempScaleY;
+        objects[i].left = tempLeft;
+        objects[i].top = tempTop;
+
+        objects[i].setCoords();
+    }
+    
+    canvas.renderAll();        
+}
+
+// Reset Zoom
+function resetZoom() {
+    
+    var objects = canvas.getObjects();
+    for (var i in objects) {
+        var scaleX = objects[i].scaleX;
+        var scaleY = objects[i].scaleY;
+        var left = objects[i].left;
+        var top = objects[i].top;
+    
+        var tempScaleX = scaleX * (1 / canvasScale);
+        var tempScaleY = scaleY * (1 / canvasScale);
+        var tempLeft = left * (1 / canvasScale);
+        var tempTop = top * (1 / canvasScale);
+
+        objects[i].scaleX = tempScaleX;
+        objects[i].scaleY = tempScaleY;
+        objects[i].left = tempLeft;
+        objects[i].top = tempTop;
+
+        objects[i].setCoords();
+    }
+        
+    canvas.renderAll();
+    
+    canvasScale = 1;
+}
 		/*
 		fabric.Image.fromURL('bg.png', function(oImg) {
 		 oImg.width = 600;
@@ -305,6 +537,11 @@ canvas.add(new fabric.Rect({
 
           });
 */
+
+
+
+
+/*
 var group = new fabric.Group([
 
   canvas.item(0).clone(),
@@ -312,8 +549,7 @@ var group = new fabric.Group([
   canvas.item(1).clone(),
   
   canvas.item(2).clone(),
- // canvas.item(3).clone(),
-  //canvas.item(4).clone()
+ 
 
 ]);
 
@@ -347,7 +583,7 @@ for(var i = 0; i < items.length; i++) {
   
 }
 
-       
+  */     
 		
 		
 		
