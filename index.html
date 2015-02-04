@@ -16,6 +16,60 @@
 		<!-- A canvas tag is required or 
 			 Fabric.js doesn't know where to draw. -->
 		<canvas id="c" style="border:1px solid black;" width="800" height="600"></canvas>
+		<!--  <div style="display: inline-block; margin-left: 10px">  -->
+              <button id="loadImage" class="btn btn-info">Load</button>
+              <button id="addImage" class="btn btn-info">Image</button>
+			  <input type="image" src="shape.png"  id ="addShape" name="addShape" width="40" height="40">
+			 <!--  <button id="addShape" class="btn btn-info">Shape</button>  -->
+			 <!-- <button id="addText" class="btn btn-info">Text</button>  -->
+			    <input type="image" src="text.png"  id ="addText" name="addText" width="40" height="40">
+			  <button id="addCropMode" class="btn btn-info">Crop Mode</button>
+			  <button id="addCrop" class="btn btn-info">Crop</button>
+			 <!--  <button id="clear" class="btn btn-info">Clear</button> -->
+			  <input type="image" src="clear.png"  id ="clear" name="clear" width="40" height="40">
+			  
+			  <input type="image" src="line.png"  id ="drawMode" name="clear" width="40" height="40">
+			    <button id="save" class="btn btn-info">Save</button>
+			 
+	    <!-- </div>  -->
+		
+		 <div id="drawing-mode-options">
+         <label for="drawing-mode-selector">Mode:</label>
+         <select id="drawing-mode">
+        <option>Pencil</option>
+        <option>Circle</option>
+      <option>Spray</option>
+      <option>Pattern</option>
+
+      <option>hline</option>
+      <option>vline</option>
+      <option>square</option>
+      <option>diamond</option>
+      <option>texture</option>
+    </select>
+
+    <label for="drawing-line-width" id='drawing-line-width-label'>Line width:</label>
+    <span class="info">30</span><input type="range" value="30" min="0" max="100" id="drawing-line-width" width:10px>
+
+    <label for="drawing-color" id='drawing-color-label'>Line color:</label>
+    <!-- <input type="color" value="#005E7A" id="drawing-color">  -->
+	 <select id="drawing-color">
+	  <option>red</option>
+	  <option>green</option>
+	  <option>blue</option>
+	  <option>white</option>
+	  <option>black</option>
+	  <option>gray</option>
+	  <option>violet</option>
+	  <option>pink</option>
+	  <option>yellow</option>
+	 </select>
+
+    
+  </div>
+  
+  <a href="bird.gif" id= 'savedimage'>save</a>
+
 </body>
  
 <script>
@@ -27,21 +81,179 @@
 	// DOM properly initialized (courtesy jquery)
 	$(function () {
 		var canvas = new fabric.Canvas('c');
-		// Obtain a canvas drawing surface from fabric.js
 		
-		
+		 document.getElementById('drawing-mode-options').style.visibility = 'hidden';
+		 document.getElementById('drawing-line-width-label').style.visibility = 'hidden';
+		 document.getElementById('drawing-color-label').style.visibility = 'hidden';
 		  
+		 document.getElementById('drawing-mode').style.visibility = 'hidden';
+         document.getElementById('drawing-line-width').style.visibility = 'hidden';
+         document.getElementById('drawing-color').style.visibility = 'hidden';
+
+		 
+		 
+		 document.getElementById('clear').addEventListener('click', function(e) {
+        
+		   var activeObject = canvas.getActiveObject();
+		   if(activeObject) { canvas.remove(activeObject); }
+		   
+		   });
+		
+		
+		 document.getElementById('loadImage').addEventListener('click', function(e) {
+         // alert ('load image');
+		 
 		  
+          fabric.Image.fromURL('bg.png', function(oImg) {
+		  oImg.width = 600;
+		  oImg.height = 400;
+          canvas.add(oImg);
+		  canvas.sendToBack(oImg);
+		  group.addWithUpdate(oImg);
+		  
+             }); 
+        });
 		
- 
-		/*var group = new fabric.Group([ ], {
-	      left: 0,
-	      top: 0
-	    });*/
+		 document.getElementById('addText').addEventListener('click', function(e) {
+		// alert('text');
+         var txt = new fabric.IText('hello world', {left: 600,top: 400	});
+		   canvas.add(txt);
+		   group.addWithUpdate(txt);
+		 });
 		
+		 document.getElementById('addShape').addEventListener('click', function(e) {
+		// alert('shape');
+         var shp = new fabric.Rect({ width: 50, height: 50, left: 50, top: 50, fill: 'rgb(255,0,0)'});
+		 canvas.add(shp);
+		 group.addWithUpdate(shp);
+		 });
+		 
+		 document.getElementById('addImage').addEventListener('click', function(e) {
+		 var img = fabric.Image.fromURL('bird.png', function(osmall) {
+		  canvas.add(osmall);
+		 });
+		  // oImg.width = 600;
+		 //oImg.height = 400;
+          //canvas.add(osmall);
 		
-	    //canvas.add(group);
+		 group.addWithUpdate(img);
+		 });
+		 
+		 document.getElementById('addCropMode').addEventListener('click', function(e) {
+		 //alert('Crop');
+         var shp = new fabric.Rect({ width: 100, height: 100, left: 50, top: 50, fill: 'transparent' , stroke :'black', strokeWidth: 1});
+		 canvas.add(shp);
+		 group.addWithUpdate(shp);
+		 });
+		 
+		  document.getElementById('addCrop').addEventListener('click', function(e) {
+		  
+		   var cobj= canvas.getActiveObject();
+		  
+		   
+		   
+               object.clipTo = function (ctx) {
+               ctx.rect(cobj.left, cobj.top, cobj.width, cobj.height);
+			   };
+               object.selectable = true;
+               disabled = true;
+               //el.visible = false;
+               canvas.renderAll();
+			   alert('image croped');
+		 });
+		 
+		 
+		  document.getElementById('drawMode').addEventListener('click', function(e) {
+		    canvas.isDrawingMode = !canvas.isDrawingMode;
+			
+			if(canvas.isDrawingMode)
+			{
+			document.getElementById('drawing-mode-options').style.visibility = 'visible';
+		    document.getElementById('drawing-line-width-label').style.visibility = 'visible';
+		    document.getElementById('drawing-color-label').style.visibility = 'visible';
+		  
+		   document.getElementById('drawing-mode').style.visibility = 'visible';
+           document.getElementById('drawing-line-width').style.visibility = 'visible';
+            document.getElementById('drawing-color').style.visibility = 'visible';
+			}
+			else
+			{
+			document.getElementById('drawing-mode-options').style.visibility = 'hidden';
+		    document.getElementById('drawing-line-width-label').style.visibility = 'hidden';
+		    document.getElementById('drawing-color-label').style.visibility = 'hidden';
+		  
+		    document.getElementById('drawing-mode').style.visibility = 'hidden';
+            document.getElementById('drawing-line-width').style.visibility = 'hidden';
+             document.getElementById('drawing-color').style.visibility = 'hidden';
+			}
+			
+		 });
+		 
+		 document.getElementById('drawing-mode').addEventListener('change', function(e) {
 		
+
+    if (this.value === 'hline') {
+      canvas.freeDrawingBrush = vLinePatternBrush;
+    }
+    else if (this.value === 'vline') {
+      canvas.freeDrawingBrush = hLinePatternBrush;
+    }
+    else if (this.value === 'square') {
+      canvas.freeDrawingBrush = squarePatternBrush;
+    }
+    else if (this.value === 'diamond') {
+      canvas.freeDrawingBrush = diamondPatternBrush;
+    }
+    else if (this.value === 'texture') {
+      canvas.freeDrawingBrush = texturePatternBrush;
+    }
+    else {
+      canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
+    }
+
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = drawingColorEl.value;
+      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      
+    }
+  });
+
+  document.getElementById('drawing-line-width').addEventListener('change', function(e) {
+  canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+    this.previousSibling.innerHTML = this.value;
+	
+   
+  });
+  
+  
+   document.getElementById('drawing-color').addEventListener('change', function(e) {
+  
+    
+	
+	 canvas.freeDrawingBrush.color = this.value;
+  });
+
+  
+   document.getElementById('save').addEventListener('click', function(e) {
+		
+        var imgdata = canvas.toDataURL('image/png');
+		//alert(imgdata);
+   
+       var newdata = imgdata.replace(/^data:image\/png/,'data:image/octet-stream');
+	   
+	   //alert (newdata);
+   
+         document.getElementById('savedimage').attr('download','myimage.png');
+		 document.getElementById('savedimage').attr('href',imgdata);
+         //document.getElementById('savedimage').src  = newdata;
+         alert("image saved");
+
+	
+
+		 });
+		 
+		 
+		/*
 		fabric.Image.fromURL('bg.png', function(oImg) {
 		 oImg.width = 600;
 		 oImg.height = 400;
@@ -49,28 +261,28 @@
 		  canvas.sendToBack(oImg);
 
           });
-		
+		*/
 		
 		
 		
 		
 		  
-		  
+	/*	  
 var hi = new fabric.IText('hello, world.', {
 			left: 600,
 			top: 400		
 		});
 	
-		//group.add(hi);
+		
 		
 		canvas.add(hi);
 		
-		//canvas.clear();
+		*/
 
  
 
-// add red rectangl
 
+/*
 canvas.add(new fabric.Rect({
 
   width: 50, height: 50, left: 50, top: 50, fill: 'rgb(255,0,0)'
@@ -84,14 +296,15 @@ canvas.add(new fabric.Rect({
   width: 50, height: 50, left: 110, top: 50, fill: 'rgb(255,0,0)'
 
 }));
-
+*/
+/*
  fabric.Image.fromURL('bird.png', function(osmall) {
 		// oImg.width = 600;
 		 //oImg.height = 400;
           canvas.add(osmall);
 
           });
-
+*/
 var group = new fabric.Group([
 
   canvas.item(0).clone(),
@@ -99,8 +312,8 @@ var group = new fabric.Group([
   canvas.item(1).clone(),
   
   canvas.item(2).clone(),
-  canvas.item(3).clone(),
-  canvas.item(4).clone()
+ // canvas.item(3).clone(),
+  //canvas.item(4).clone()
 
 ]);
 
@@ -112,7 +325,7 @@ canvas.add(group);
 
  
 
-// move group, rotate group
+
 
 group.centerH();
 
@@ -121,47 +334,26 @@ group.centerV();
 group.rotate(70);
 
  
-
-// ungrouping is here
-
 var items = group._objects;
-
 group._restoreObjectsState();
-
 canvas.remove(group);
+
+
+
 
 for(var i = 0; i < items.length; i++) {
 
   canvas.add(items[i]);
-
+  
 }
 
- 
-
-
-
-var el = document.getElementById('c');
-
-var ctx = canvas.getContext('2d');
-var isDrawing;
-
-el.onmousedown = function(e) {
-  isDrawing = true;
-  ctx.moveTo(e.clientX, e.clientY);
-};
-el.onmousemove = function(e) {
-  if (isDrawing) {
-    ctx.lineTo(e.clientX, e.clientY);
-    ctx.stroke();
-  }
-};
-el.onmouseup = function() {
-  isDrawing = false;
-};
-
-canvas.renderAll();
-				
-	});
+       
+		
+		
+		
+   //canvas.renderAll();
+})();
+	
 </script>
 		
 </head>
